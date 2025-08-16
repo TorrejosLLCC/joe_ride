@@ -42,7 +42,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
   const addOffer = (offerData: Omit<RideOffer, 'id'>) => {
     const newOffer = {
       ...offerData,
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
     };
     setOffers(prev => [...prev, newOffer]);
   };
