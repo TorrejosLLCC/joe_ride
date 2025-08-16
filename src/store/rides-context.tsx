@@ -50,7 +50,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
   const addRequest = (requestData: Omit<RideRequest, 'id'>) => {
     const newRequest = {
       ...requestData,
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
     };
     setRequests(prev => [...prev, newRequest]);
   };
