@@ -29,7 +29,7 @@ export const NotificationsProvider: FC<{ children: React.ReactNode }> = ({
   const addNotification = (notificationData: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const newNotification = {
       ...notificationData,
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       timestamp: new Date(),
       read: false,
     };
