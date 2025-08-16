@@ -32,7 +32,7 @@ export const VoucherProvider: FC<{ children: React.ReactNode }> = ({
   const addTransaction = (transactionData: Omit<VoucherTransaction, 'id' | 'date'>) => {
     const newTransaction = {
       ...transactionData,
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       date: new Date(),
     };
     setTransactions(prev => [...prev, newTransaction]);
