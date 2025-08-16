@@ -29,7 +29,7 @@ export const VehicleProvider: FC<{ children: React.ReactNode }> = ({
   const addVehicle = (vehicleData: Omit<Vehicle, 'id'>) => {
     const newVehicle = {
       ...vehicleData,
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
     };
     setVehicles(prev => [...prev, newVehicle]);
   };
