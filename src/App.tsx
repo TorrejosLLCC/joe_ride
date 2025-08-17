@@ -15,6 +15,7 @@ import { UserProfile } from "./pages/UserProfile";
 import { VoucherSummary } from "./pages/VoucherSummary";
 
 import "./App.css";
+import { Header } from "./components/Header/Header";
 
 const App: React.FC = () => {
   return (
@@ -25,13 +26,7 @@ const App: React.FC = () => {
             <NotificationsProvider>
               <Router>
                 <div className="App">
-                  <header className="app-header">
-                    <nav>
-                      <h1>☕ Joe Ride</h1>
-                      {/* Navigation will be added later */}
-                    </nav>
-                  </header>
-
+                  <Header />
                   <main className="app-main">
                     <Routes>
                       <Route path="/" element={<Home />} />
