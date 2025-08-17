@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import RideRequestForm from "../components/Ride/RideRequestForm";
 
 export const RequestRide: FC = () => {
   return (
@@ -6,6 +7,7 @@ export const RequestRide: FC = () => {
       <h1>Request a Ride</h1>
       <p>Create a new ride request</p>
       {/* RideRequestForm component will be implemented later */}
+      <RideRequestForm />
     </div>
   );
 };
