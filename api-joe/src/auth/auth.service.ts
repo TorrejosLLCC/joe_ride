@@ -28,15 +28,12 @@ export class AuthService {
     //     };
     // }
 
-    async login(user: User) {
-        return {
+    async login(email: string, password: string) {
+        const user = await this.validateUser(email, password);
 
-            message: 'Login successful',
-            user: {
-                id: user.id,
-                email: user.email,
-                fullName: user.fullName,
-            },
+        return {
+            userId: user.id,
+            user,
         };
     }
 

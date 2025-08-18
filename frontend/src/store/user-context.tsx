@@ -107,6 +107,8 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       rating: res.user.rating ?? 5,
     };
 
+    localStorage.setItem("userId", res.user.id);
+
     setUser(loggedUser);
     console.log("User signed in:", loggedUser);
     return loggedUser;

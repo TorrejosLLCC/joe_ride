@@ -14,9 +14,14 @@ export class AuthController {
         return this.authService.register(createUserDto);
     }
 
-    @UseGuards(AuthGuard('local'))
+    // @UseGuards(AuthGuard('local'))
+    // @Post('login')
+    // async login(@Request() req) {
+    //     return this.authService.login(req.user);
+    // }
+
     @Post('login')
-    async login(@Request() req) {
-        return this.authService.login(req.user);
+    async login(@Body() body: { email: string; password: string }) {
+        return this.authService.login(body.email, body.password);
     }
 }
