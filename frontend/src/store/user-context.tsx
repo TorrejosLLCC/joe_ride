@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type FC } from "react";
+import { login } from "../api/auth/authApi";
 
 export interface User {
   id: string;
@@ -48,7 +49,11 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     }
   }, [user]);
 
-  const signOut = () => setUser(null);
+  // const signOut = () => setUser(null);
+  const signOut = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
 
   // Mock register & sign in (no backend yet)
   const register = async (data: { name: string; email: string; password: string }) => {
@@ -65,24 +70,22 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
   };
 
   const signIn = async (data: { email: string; password: string }) => {
-    // For mock, if existing persisted user matches email, reuse; otherwise create placeholder user
-    const currentRaw = localStorage.getItem("joeRideUser");
-    if (currentRaw) {
-      const existing: User = JSON.parse(currentRaw);
-      if (existing.email.toLowerCase() === data.email.toLowerCase()) {
-        setUser(existing);
-        return existing;
-      }
-    }
-    const placeholder: User = {
-      id: crypto.randomUUID(),
-      name: data.email.split("@")[0] || "Rider",
-      email: data.email.toLowerCase(),
-      isVerified: false,
-      rating: 5,
+    const res = await login(data);
+
+    // Example backend login response:
+    // { message: "Login successful", user: { id, email, fullName, isVerified, rating } }
+    const loggedUser: User = {
+      id: res.user.id,
+      name: res.user.fullName ?? res.user.name,
+      email: res.user.email,
+      isVerified: res.user.isVerified ?? false,
+      rating: res.user.rating ?? 5,
     };
-    setUser(placeholder);
-    return placeholder;
+
+    setUser(loggedUser);
+    console.log("User signed in:", loggedUser);
+    return loggedUser;
+
   };
 
   return (
