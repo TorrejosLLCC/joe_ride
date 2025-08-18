@@ -1,4 +1,3 @@
-// src/auth/auth.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -22,10 +21,22 @@ export class AuthService {
         return null;
     }
 
+    // async login(user: User) {
+    //     const payload = { email: user.email, sub: user.id };
+    //     return {
+    //         access_token: this.jwtService.sign(payload),
+    //     };
+    // }
+
     async login(user: User) {
-        const payload = { email: user.email, sub: user.id };
         return {
-            access_token: this.jwtService.sign(payload),
+
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                email: user.email,
+                fullName: user.fullName,
+            },
         };
     }
 

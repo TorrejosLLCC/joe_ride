@@ -3,8 +3,14 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  // app.enableCors();
+  app.enableCors({
+    // origin: 'http://localhost:5173', // Your React app's URL
+    origin: true,
+    credentials: true
+  });
+
   await app.listen(process.env.PORT ?? 8000);
-  // console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

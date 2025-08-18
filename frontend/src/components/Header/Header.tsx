@@ -60,7 +60,7 @@ export const Header = () => {
         )}
         {isLoggedIn && (
           <div className="user-chip">
-            <span className="user-name">{user?.name}</span>
+            <span className="user-name">Hello, {user?.name}</span>
             <Button onClick={signOut} variant="secondary">Sign Out</Button>
           </div>
         )}
