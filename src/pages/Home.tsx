@@ -5,13 +5,21 @@ import { useNavigate } from "react-router-dom";
 export const Home: FC = () => {
   const navigate = useNavigate();
 
+  const handleOfferRide = () => {
+    navigate("/offer-ride");
+  }
+
+  const handleRequestRide = () => {
+    navigate("/request-ride");
+  }
+
   return (
     <div className="home-page">
       <h1>Joe Ride</h1>
       <p>Your coffee-powered ride sharing platform</p>
       <div className="actions">
-        <Button onClick={() => navigate("/offer-ride")}>Offer a Ride</Button>
-        <Button onClick={() => navigate("/request-ride")} variant="secondary">Request a Ride</Button>
+        <Button onClick={handleOfferRide}>Offer a Ride</Button>
+        <Button onClick={handleRequestRide} variant="secondary">Request a Ride</Button>
       </div>
     </div>
   )
