@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:8000
+
+###
+# Root health check
+GET {{baseUrl}}/
+
+###
+# Register new user (CreateUserDto)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Jane Driver",
+  "dateOfBirth": "1990-05-12",
+  "homeAddress": "123 Coffee St, Beans City",
+  "vehicleType": "Sedan",
+  "vehiclePlate": "ABC-1234",
+  "driversLicenseNumber": "D1234567890",
+  "mobilePhoneNumber": "+15551234567",
+  "email": "jane.driver@example.com",
+  "password": "SuperSecret1!"
+}
+
+###
+# Login (passport-local expects email & password)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "jane.driver@example.com",
+  "password": "SuperSecret1!"
+}
+
+###
+# (Example) Second login with wrong password to see 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "jane.driver@example.com",
+  "password": "WrongPassword!"
+}
