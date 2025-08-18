@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type FC } from "react";
-import { login } from "../api/auth/authApi";
+import { login, registerApi } from "../api/auth/authApi";
 
 export interface User {
   id: string;
@@ -9,12 +9,24 @@ export interface User {
   rating: number;
 }
 
+export interface RegisterInput {
+  name: string;
+  email: string;
+  password: string;
+  dateOfBirth: string;
+  homeAddress: string;
+  mobilePhoneNumber: string;
+  vehicleType?: string;
+  vehiclePlate?: string;
+  driversLicenseNumber?: string;
+}
+
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   isLoggedIn: boolean;
   signOut: () => void;
-  register: (data: { name: string; email: string; password: string }) => Promise<User>;
+  register: (data: RegisterInput) => Promise<User>;
   signIn: (data: { email: string; password: string }) => Promise<User>;
 }
 
@@ -56,15 +68,28 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
   };
 
   // Mock register & sign in (no backend yet)
-  const register = async (data: { name: string; email: string; password: string }) => {
-    // In real app, send to backend. Here we just fabricate a user.
+  const register = async (data: RegisterInput) => {
+    const res = await registerApi({
+      fullName: data.name,
+      email: data.email,
+      password: data.password,
+      dateOfBirth: data.dateOfBirth,
+      homeAddress: data.homeAddress,
+      mobilePhoneNumber: data.mobilePhoneNumber,
+      vehicleType: data.vehicleType,
+      vehiclePlate: data.vehiclePlate,
+      driversLicenseNumber: data.driversLicenseNumber,
+    });
+
+    // Map backend response -> User type
     const newUser: User = {
-      id: crypto.randomUUID(),
-      name: data.name,
-      email: data.email.toLowerCase(),
-      isVerified: false,
-      rating: 5,
+      id: res.id,
+      name: res.fullName ?? res.name,
+      email: res.email,
+      isVerified: res.isVerified ?? false,
+      rating: res.rating ?? 5,
     };
+
     setUser(newUser);
     return newUser;
   };

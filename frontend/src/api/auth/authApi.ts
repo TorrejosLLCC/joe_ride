@@ -9,6 +9,12 @@ export interface RegisterPayload {
     fullName: string;
     email: string;
     password: string;
+    dateOfBirth: string;
+    homeAddress: string;
+    vehicleType?: string;
+    vehiclePlate?: string;
+    driversLicenseNumber?: string;
+    mobilePhoneNumber: string;
 }
 
 export const login = async (data: LoginPayload) => {
@@ -16,7 +22,7 @@ export const login = async (data: LoginPayload) => {
     return res.data;
 };
 
-export const register = async (data: RegisterPayload) => {
+export const registerApi = async (data: RegisterPayload) => {
     const res = await api.post("/auth/register", data);
     return res.data;
 };
