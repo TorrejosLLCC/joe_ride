@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, type FC } from "react";
-import { createOfferRide } from "../api/rides/offerRideApi";
+import { createContext, useContext, useEffect, useState, type FC } from "react";
+import { createOfferRide, getAllRideOffers } from "../api/rides/offerRideApi";
 import type { OfferRidePayload } from "../api/rides/offerRideApi";
 
 interface RideOffer {
@@ -9,20 +9,12 @@ interface RideOffer {
   to: string;
   departureTime: Date;
   availableSeats: number;
-  pricePerSeat: number;
+  pricePerSeat: number | null;
   voucherRequired: boolean;
   vehicleType: string;
+  distanceKm: number;
+  status: string;
 }
-
-// "fromLocation": "cebu",
-// "toLocation": "lapulapu",
-// "departureTime": "2025-08-20T08:30:00.000Z",
-// "capacity": 5,
-// "pricePerSeat": 500,
-// "voucherRequired": false,
-// "vehicleType": "van",
-// "distanceKm": 20.1
-
 
 interface RideRequest {
   id: string;
@@ -51,6 +43,21 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
   const [offers, setOffers] = useState<RideOffer[]>([]);
   const [requests, setRequests] = useState<RideRequest[]>([]);
 
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const offers = await getAllRideOffers();
+        setOffers(offers);
+      } catch (error) {
+        console.error("Failed to fetch offers", error);
+      }
+    };
+    fetchOffers();
+  }, []);
+  console.log(offers);
+
+
   const addOffer = async (offerData: OfferRidePayload) => {
     try {
       const res = await createOfferRide(offerData);
@@ -65,6 +72,8 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
         pricePerSeat: res.pricePerSeat,
         voucherRequired: res.voucherRequired,
         vehicleType: res.vehicleType, // adjust
+        distanceKm: res.distanceKm ?? 0, // fallback to 0 if undefined
+        status: res.status ?? "pending", // fallback to "pending" if undefined
       };
 
       setOffers(prev => [...prev, newOffer]);
