@@ -6,9 +6,15 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload {
-    name: string;
+    fullName: string;
     email: string;
     password: string;
+    dateOfBirth: string;
+    homeAddress: string;
+    vehicleType?: string;
+    vehiclePlate?: string;
+    driversLicenseNumber?: string;
+    mobilePhoneNumber: string;
 }
 
 export const login = async (data: LoginPayload) => {
@@ -16,7 +22,7 @@ export const login = async (data: LoginPayload) => {
     return res.data;
 };
 
-export const register = async (data: RegisterPayload) => {
+export const registerApi = async (data: RegisterPayload) => {
     const res = await api.post("/auth/register", data);
     return res.data;
 };
@@ -24,4 +30,14 @@ export const register = async (data: RegisterPayload) => {
 export const logout = async () => {
     const res = await api.post("/auth/logout");
     return res.data;
+};
+
+
+export const getCurrentUser = async (token: string) => {
+    const response = await fetch(`${api}/auth/me`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    return await response.json();
 };

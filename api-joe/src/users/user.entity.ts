@@ -1,6 +1,7 @@
 // src/users/user.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsDate } from 'class-validator';
+import { RideOffer } from 'src/ride-offers/entities/ride-offer.entity';
 
 @Entity()
 export class User {
@@ -51,4 +52,9 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    // 1 user can have many ride offers
+    @OneToMany(() => RideOffer, rideOffer => rideOffer.driver)
+    rideOffers: RideOffer[];
+
 }

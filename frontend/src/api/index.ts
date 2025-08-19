@@ -2,12 +2,27 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: "http://localhost:8000",
     withCredentials: true,
+    headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
 });
 
-export default api;
 
+// Add response interceptor
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.headers?.['content-type']?.includes('text/html')) {
+            throw new Error("Received HTML instead of JSON. Check your API endpoint.");
+        }
+        return Promise.reject(error);
+    }
+);
+
+export default api;
 
 
 

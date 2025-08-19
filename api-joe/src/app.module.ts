@@ -6,6 +6,8 @@ import { AppService } from './app.service';
 import { User } from './users/user.entity';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { RideOffersModule } from './ride-offers/ride-offers.module';
+import { RideOffer } from './ride-offers/entities/ride-offer.entity';
 
 @Module({
   imports: [
@@ -20,13 +22,15 @@ import { AuthModule } from './auth/auth.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [User],
+        entities: [User, RideOffer],
         synchronize: true,
+        autoLoadEntities: true, // useful if you don’t want to list entities manually
       }),
       inject: [ConfigService],
     }),
     AuthModule,
-    UsersModule
+    UsersModule,
+    RideOffersModule
   ],
   controllers: [AppController],
   providers: [AppService],
