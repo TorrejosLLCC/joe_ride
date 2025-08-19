@@ -90,14 +90,14 @@ npm install
 ```
 
 #### Environment Configuration
-1. The `.env` file should already exist with default values:
+1. Create the `.env` file with these values:
 ```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=1234
-DB_DATABASE=demo
-JWT_SECRET=53804092259307601598253137622462
+DB_HOST=localhost              # Database host
+DB_PORT=5432                  # Database port
+DB_USERNAME=postgres          # Database username
+DB_PASSWORD=your_password     # Database password
+DB_DATABASE=demo              # Database name
+JWT_SECRET=your_jwt_secret    # JWT secret key
 ```
 
 2. **Update the `.env` file** with your actual database credentials:
