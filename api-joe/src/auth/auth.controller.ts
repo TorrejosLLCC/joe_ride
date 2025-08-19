@@ -1,9 +1,10 @@
 
-import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/user.entity';
+import { JwtAuthGuard } from './jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -23,5 +24,11 @@ export class AuthController {
     @Post('login')
     async login(@Body() body: { email: string; password: string }) {
         return this.authService.login(body.email, body.password);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('me')
+    async me(@Request() req) {
+        return this.authService.me(req.user.userId);
     }
 }

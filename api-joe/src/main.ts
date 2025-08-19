@@ -4,10 +4,16 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // app.enableCors();
+  const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173').split(',');
   app.enableCors({
-    // origin: 'http://localhost:5173', // Your React app's URL
-    origin: true,
-    credentials: true
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
   });
 
   await app.listen(process.env.PORT ?? 8000);

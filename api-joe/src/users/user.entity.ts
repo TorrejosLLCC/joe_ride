@@ -34,7 +34,7 @@ export class User {
 
     @Column()
     @IsNotEmpty()
-    @IsPhoneNumber()
+    @IsPhoneNumber('PH')
     mobilePhoneNumber: string;
 
     @Column({ unique: true })

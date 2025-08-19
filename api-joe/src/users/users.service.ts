@@ -30,4 +30,15 @@ export class UsersService {
     // async findOneById(id: number): Promise<User | undefined> {
     //     return this.usersRepository.findOne({ where: { id } });
     // }
+
+    async update(id: number, partial: Partial<User>): Promise<User | undefined> {
+        const user = await this.findOneById(id);
+        if (!user) return undefined;
+        Object.assign(user, partial);
+        return this.usersRepository.save(user);
+    }
+
+    async remove(id: number): Promise<void> {
+        await this.usersRepository.delete(id);
+    }
 }

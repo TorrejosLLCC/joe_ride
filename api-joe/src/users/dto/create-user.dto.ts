@@ -1,5 +1,6 @@
 // src/users/dto/create-user.dto.ts
-import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsDateString, isString, IsString, Min, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsDateString, IsString, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
     @IsNotEmpty()
@@ -7,6 +8,7 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsDateString()
+    @Type(() => Date)
     dateOfBirth: Date;
 
     @IsNotEmpty()
@@ -22,7 +24,7 @@ export class CreateUserDto {
     driversLicenseNumber?: string;
 
     @IsNotEmpty()
-    @IsPhoneNumber()
+    @IsPhoneNumber('PH')
     mobilePhoneNumber: string;
 
     @IsNotEmpty()
