@@ -17,7 +17,7 @@ export class RideOffersService {
             driverId,
             fromLocation: dto.fromLocation,
             toLocation: dto.toLocation,
-            departureTime: new Date(dto.departureTime),
+            departureTime: new Date(dto.departure),
             capacity: dto.capacity,
             seatsAvailable: dto.capacity, // initialize
             pricePerSeat: dto.pricePerSeat ?? null,

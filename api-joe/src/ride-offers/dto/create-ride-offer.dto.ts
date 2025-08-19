@@ -18,6 +18,9 @@ export class CreateRideOfferDto {
     @IsDateString()
     departureTime: string; // ISO date string
 
+    @IsDateString()
+    departure: string;   // ISO string
+
     @IsInt()
     @Min(1)
     @Max(8)

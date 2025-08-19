@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../users/user.entity';
 
 export enum VehicleType {
@@ -25,8 +25,13 @@ export class RideOffer {
     @Column()
     driverId: string;
 
-    @ManyToOne(() => User, { nullable: true })
-    driver?: User;
+    // @ManyToOne(() => User, { nullable: true })
+    // driver?: User;
+
+    // multiple ride offers belong to one driver
+    @ManyToOne(() => User, (user) => user.rideOffers, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'driverId' })
+    driver: User;
 
     @Column({ length: 255 })
     fromLocation: string;
