@@ -10,6 +10,20 @@ const api = axios.create({
     }
 });
 
+// Add request interceptor to include user ID header
+api.interceptors.request.use(
+    (config) => {
+        // Get user ID from localStorage
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            config.headers['x-user-id'] = userId;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 // Add response interceptor
 api.interceptors.response.use(

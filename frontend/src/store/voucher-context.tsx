@@ -1,19 +1,20 @@
 import { createContext, useContext, useState, type FC } from "react";
+import { calculateVoucherRequirement, type VehicleType, type VoucherSize } from "../utils/voucherCalculator";
 
 interface VoucherTransaction {
   id: string;
   userId: string;
-  amount: number;
+  size: VoucherSize;
   type: 'earned' | 'spent';
   description: string;
   date: Date;
 }
 
 interface VoucherContextType {
-  balance: number;
   transactions: VoucherTransaction[];
   addTransaction: (transaction: Omit<VoucherTransaction, 'id' | 'date'>) => void;
-  calculateVoucherRequirement: (distance: number, seats: number) => number;
+  calculateVoucherForTrip: (distance: number, vehicleType: VehicleType) => { size: VoucherSize; description: string };
+  getVoucherBalance: () => { [K in VoucherSize]: number };
 }
 
 const VoucherContext = createContext<VoucherContextType | undefined>(undefined);
@@ -22,12 +23,6 @@ export const VoucherProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [transactions, setTransactions] = useState<VoucherTransaction[]>([]);
-
-  const balance = transactions.reduce((acc, transaction) => {
-    return transaction.type === 'earned' 
-      ? acc + transaction.amount 
-      : acc - transaction.amount;
-  }, 0);
 
   const addTransaction = (transactionData: Omit<VoucherTransaction, 'id' | 'date'>) => {
     const newTransaction = {
@@ -38,18 +33,36 @@ export const VoucherProvider: FC<{ children: React.ReactNode }> = ({
     setTransactions(prev => [...prev, newTransaction]);
   };
 
-  const calculateVoucherRequirement = (distance: number, seats: number) => {
-    // Simple formula: base voucher requirement per km per seat
-    const baseRate = 0.1; // vouchers per km per seat
-    return Math.ceil(distance * seats * baseRate);
+  const calculateVoucherForTrip = (distance: number, vehicleType: VehicleType) => {
+    return calculateVoucherRequirement(distance, vehicleType);
+  };
+
+  const getVoucherBalance = () => {
+    const balance: { [K in VoucherSize]: number } = {
+      Short: 0,
+      Tall: 0,
+      Grande: 0,
+      Venti: 0,
+      Trenta: 0,
+    };
+
+    transactions.forEach(transaction => {
+      if (transaction.type === 'earned') {
+        balance[transaction.size]++;
+      } else {
+        balance[transaction.size]--;
+      }
+    });
+
+    return balance;
   };
 
   return (
     <VoucherContext.Provider value={{ 
-      balance, 
       transactions, 
       addTransaction, 
-      calculateVoucherRequirement 
+      calculateVoucherForTrip,
+      getVoucherBalance
     }}>
       {children}
     </VoucherContext.Provider>

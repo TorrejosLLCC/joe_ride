@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../../store/user-context";
 import { Modal } from "../UI/Modal";
 import { Input } from "../UI/Input";
@@ -9,8 +10,9 @@ interface AuthModeState {
 }
 
 export const Header = () => {
-  const { isLoggedIn, user, signOut, signIn, register } = useUser();
+  const { isLoggedIn, user, canOfferRides, signOut, signIn, register } = useUser();
   const [authState, setAuthState] = useState<AuthModeState>({ mode: null });
+  const location = useLocation();
 
   const [form, setForm] = useState({
     name: "",
@@ -74,19 +76,93 @@ export const Header = () => {
     }
   };
 
+  // Demo login function for testing
+  const demoLogin = (hasLicense: boolean = false) => {
+    const demoUser = hasLicense ? {
+      id: "demo-driver",
+      name: "Demo Driver",
+      email: "driver@demo.com",
+      isVerified: true,
+      rating: 4.8,
+      driversLicenseNumber: "DL123456789",
+      hasValidLicense: true,
+      vehicleType: "car",
+      vehiclePlate: "ABC123",
+    } : {
+      id: "demo-passenger",
+      name: "Demo Passenger",
+      email: "passenger@demo.com",
+      isVerified: true,
+      rating: 4.5,
+      hasValidLicense: false,
+    };
+    
+    // Set demo user
+    localStorage.setItem("joeRideUser", JSON.stringify(demoUser));
+    
+    window.location.reload();
+  };
+
   return (
     <header className="main-header">
       <div className="logo-area" role="banner">
-        <h1>☕ Joe Ride</h1>
+        <Link to="/" className="logo-link">
+          <h1>☕ Joe Ride</h1>
+        </Link>
       </div>
-      <nav className="main-nav">
-        {/* Future nav links */}
+      <nav className="main-nav" role="navigation">
+        <div className="nav-links">
+          <Link 
+            to="/" 
+            className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+          >
+            🏠 Home
+          </Link>
+          <Link 
+            to="/rideboard" 
+            className={`nav-link ${location.pathname === '/rideboard' ? 'active' : ''}`}
+          >
+            🚗 Find Rides
+          </Link> 
+          {canOfferRides && (
+            <Link 
+              to="/offer-ride" 
+              className={`nav-link ${location.pathname === '/offer-ride' ? 'active' : ''}`}
+            >
+              🎯 Offer Ride
+            </Link>
+          )}
+          {isLoggedIn && (
+            <>
+              <Link 
+                to="/profile" 
+                className={`nav-link ${location.pathname === '/profile' ? 'active' : ''}`}
+              >
+                👤 Profile
+              </Link>
+              <Link 
+                to="/vouchers" 
+                className={`nav-link ${location.pathname === '/vouchers' ? 'active' : ''}`}
+              >
+                ☕ Vouchers
+              </Link>
+            </>
+          )}
+        </div>
       </nav>
       <div className="auth-area">
         {!isLoggedIn && (
           <>
             <Button onClick={() => open("signin")} variant="secondary">Sign In</Button>
             <Button onClick={() => open("register")}>Register</Button>
+            <div className="demo-buttons">
+              <Button onClick={() => demoLogin(true)} variant="secondary" size="small">
+                Demo Driver
+              </Button>
+              <Button onClick={() => demoLogin(false)} variant="secondary" size="small">
+                Demo Passenger
+              </Button>
+            </div>
           </>
         )}
         {isLoggedIn && (

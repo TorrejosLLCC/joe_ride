@@ -6,6 +6,9 @@ interface InputProps {
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   label?: string;
+  required?: boolean;
+  min?: string;
+  max?: string;
 }
 
 export const Input: FC<InputProps> = ({
@@ -14,6 +17,9 @@ export const Input: FC<InputProps> = ({
   value,
   onChange,
   label,
+  required = false,
+  min,
+  max,
 }) => {
   return (
     <div className="input-group">
@@ -24,6 +30,9 @@ export const Input: FC<InputProps> = ({
         value={value}
         onChange={onChange}
         className="input-field"
+        required={required}
+        min={min}
+        max={max}
       />
     </div>
   );

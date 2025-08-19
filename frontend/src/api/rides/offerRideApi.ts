@@ -1,21 +1,23 @@
 import api from "../index";
 
 export interface OfferRidePayload {
-    origin: string;
-    destination: string;
-    departureDate: string;
-    departureTime: string;
+    driverId?: string; // Optional fallback for testing
+    fromLocation: string;
+    toLocation: string;
+    departureTime: string; // ISO date string
     capacity: number;
+    pricePerSeat?: number;
+    voucherRequired: number;
     vehicleType: string;
-    kilometerCount: number;
+    distanceKm: number;
 }
 
 export const createOfferRide = async (data: OfferRidePayload) => {
-    const res = await api.post("/rides/offer", data);
+    const res = await api.post("/ride-offers", data);
     return res.data;
 };
 
 export const getAllRideOffers = async () => {
-    const res = await api.get("/rides/offers");
+    const res = await api.get("/ride-offers");
     return res.data;
 };

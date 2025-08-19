@@ -7,6 +7,10 @@ export interface User {
   email: string;
   isVerified: boolean;
   rating: number;
+  driversLicenseNumber?: string;
+  hasValidLicense?: boolean;
+  vehicleType?: string;
+  vehiclePlate?: string;
 }
 
 export interface RegisterInput {
@@ -25,6 +29,7 @@ interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   isLoggedIn: boolean;
+  canOfferRides: boolean;
   signOut: () => void;
   register: (data: RegisterInput) => Promise<User>;
   signIn: (data: { email: string; password: string }) => Promise<User>;
@@ -36,12 +41,18 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const isLoggedIn = user !== null;
 
+  // Check if user can offer rides (has valid license and vehicle info)
+  const canOfferRides = isLoggedIn && 
+    user?.hasValidLicense === true && 
+    !!user?.vehicleType && 
+    !!user?.vehiclePlate;
+
   // Load persisted user
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("joeRideUser");
-      if (raw) {
-        setUser(JSON.parse(raw));
+      const rawUser = localStorage.getItem("joeRideUser");
+      if (rawUser) {
+        setUser(JSON.parse(rawUser));
       }
     } catch (e) {
       // ignore
@@ -88,6 +99,10 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       email: res.email,
       isVerified: res.isVerified ?? false,
       rating: res.rating ?? 5,
+      driversLicenseNumber: data.driversLicenseNumber,
+      hasValidLicense: !!data.driversLicenseNumber,
+      vehicleType: data.vehicleType,
+      vehiclePlate: data.vehiclePlate,
     };
 
     setUser(newUser);
@@ -105,6 +120,10 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       email: res.user.email,
       isVerified: res.user.isVerified ?? false,
       rating: res.user.rating ?? 5,
+      driversLicenseNumber: res.user.driversLicenseNumber,
+      hasValidLicense: !!res.user.driversLicenseNumber,
+      vehicleType: res.user.vehicleType,
+      vehiclePlate: res.user.vehiclePlate,
     };
 
     localStorage.setItem("userId", res.user.id);
@@ -116,7 +135,7 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, isLoggedIn, signOut, register, signIn }}>
+    <UserContext.Provider value={{ user, setUser, isLoggedIn, canOfferRides, signOut, register, signIn }}>
       {children}
     </UserContext.Provider>
   );

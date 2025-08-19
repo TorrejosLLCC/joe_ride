@@ -8,14 +8,16 @@ export interface RequestRidePayload {
     kilometerCount: number;
 }
 
-export const createRideRequest = async (data: RequestRidePayload) => {
-    const res = await api.post("/rides/request", data);
-    return res.data;
+export const createRideRequest = async (_data: RequestRidePayload) => {
+    // TODO: Implement ride requests in backend
+    console.warn("Ride requests not implemented in backend yet");
+    return { message: "Ride request functionality coming soon" };
 };
 
 export const getAllRideRequests = async () => {
-    const res = await api.get("/rides/requests");
-    return res.data;
+    // TODO: Implement ride requests in backend
+    console.warn("Ride requests not implemented in backend yet");
+    return [];
 };
 
 export const getRideRequestById = async (id: string) => {
