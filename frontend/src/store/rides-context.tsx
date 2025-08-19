@@ -14,6 +14,7 @@ interface RideOffer {
   vehicleType: string;
   distanceKm: number;
   status: string;
+  capacity: number;
 }
 
 interface RideRequest {
@@ -71,6 +72,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
         pricePerSeat: res.pricePerSeat,
         voucherRequired: res.voucherRequired,
         vehicleType: res.vehicleType, // adjust
+        capacity: res.capacity,
         distanceKm: res.distanceKm ?? 0, // fallback to 0 if undefined
         status: res.status ?? "pending", // fallback to "pending" if undefined
       };
