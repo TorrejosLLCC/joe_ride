@@ -48,9 +48,22 @@ export const Header = () => {
       setLoading(true);
       setError(null);
       if (authState.mode === "register") {
-        if (!form.name.trim()) {
-          setError("Name is required");
-          return;
+        // Validation using switch (can be extended with more cases later)
+        switch (true) {
+          case !form.name.trim():
+            setError("Name is required");
+            return;
+          case !form.dateOfBirth.trim():
+            setError("Date of Birth is required");
+            return;
+          case !form.email.trim():
+            setError("Email is required");
+            return;
+          case !form.password.trim():
+            setError("Password is required");
+            return;
+          default:
+            break;
         }
         await register({
           name: form.name.trim(),
