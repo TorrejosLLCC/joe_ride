@@ -1,192 +1,159 @@
-import { useState, type FC } from "react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "../UI/Input";
-import { Button } from "../UI/Button";
+import React, { useState } from "react";
 import { useRides } from "../../store/rides-context";
-import { useVehicle } from "../../store/vehicle-context";
-import { useVoucher } from "../../store/voucher-context";
-import { useUser } from "../../store/user-context";
-import { type VehicleType } from "../../utils/voucherCalculator";
 
-interface RideOfferFormData {
-  origin: string;
-  destination: string;
-  departureDateTime: string;
-  vehicleType: VehicleType;
-  seatCapacity: number;
-  distanceKm: number;
-}
+const RideOfferForm: React.FC = () => {
+    const { addOffer } = useRides();
 
-export const RideOfferForm: FC = () => {
-  const navigate = useNavigate();
-  const { createOffer } = useRides();
-  const { activeVehicle } = useVehicle();
-  const { calculateVoucherForTrip } = useVoucher();
-  const { user } = useUser();
 
-  const [formData, setFormData] = useState<RideOfferFormData>({
-    origin: "",
-    destination: "",
-    departureDateTime: "",
-    vehicleType: activeVehicle?.type || "sedan",
-    seatCapacity: activeVehicle?.seatCapacity || 4,
-    distanceKm: 0,
-  });
+    const [formData, setFormData] = useState({
+        fromLocation: "",
+        toLocation: "",
+        departureDate: "",
+        departureTime: "",
+        capacity: 1,
+        vehicleType: "",
+        kilometerCount: 0,
+    });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    // handle input changes
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
 
-  const handleInputChange = (field: keyof RideOfferFormData, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setError(null);
-  };
+        setFormData((prev) => ({
+            ...prev,
+            [name]: name === "capacity" || name === "kilometerCount" ? Number(value) : value,
+        }));
+    };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!user) {
-      setError("You must be logged in to offer a ride");
-      return;
-    }
+    // submit handler
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-    if (!formData.origin || !formData.destination || !formData.departureDateTime) {
-      setError("Please fill in all required fields");
-      return;
-    }
+        try {
+            const payload = {
+                fromLocation: formData.fromLocation,
+                toLocation: formData.toLocation,
+                departure: `${formData.departureDate}T${formData.departureTime}`,
+                departureTime: formData.departureTime,
+                capacity: formData.capacity,
+                vehicleType: formData.vehicleType,
+                distanceKm: formData.kilometerCount,
+            };
+            await addOffer(payload); // send data to backend
+            // alert("Ride offer created successfully!");
+            setFormData({
+                fromLocation: "",
+                toLocation: "",
+                departureDate: "",
+                departureTime: "",
+                capacity: 1,
+                vehicleType: "",
+                kilometerCount: 0,
+            });
+        } catch (error) {
+            console.error("Error creating ride offer:", error);
+            alert("Failed to create ride offer.");
+        }
+    };
 
-    if (formData.distanceKm <= 0) {
-      setError("Please enter a valid distance");
-      return;
-    }
 
-    if (formData.seatCapacity <= 0) {
-      setError("Please enter a valid seat capacity");
-      return;
-    }
+    return (
+        <form onSubmit={handleSubmit} className="p-4 border rounded space-y-4">
+            <h2 className="text-lg font-bold">Offer a Ride</h2>
 
-    setIsSubmitting(true);
-    setError(null);
+            <div>
+                <label className="block">From</label>
+                <input
+                    type="text"
+                    name="fromLocation"
+                    value={formData.fromLocation}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
 
-    try {
-      const voucherInfo = calculateVoucherForTrip(formData.distanceKm, formData.vehicleType);
-      
-      await createOffer({
-        userId: user.id,
-        origin: formData.origin,
-        destination: formData.destination,
-        departureDateTime: formData.departureDateTime,
-        vehicleType: formData.vehicleType,
-        seatCapacity: formData.seatCapacity,
-        distanceKm: formData.distanceKm,
-        voucherRequired: voucherInfo.size,
-      });
+            <div>
+                <label className="block">To</label>
+                <input
+                    type="text"
+                    name="toLocation"
+                    value={formData.toLocation}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
 
-      // Reset form and navigate to ride board
-      setFormData({
-        origin: "",
-        destination: "",
-        departureDateTime: "",
-        vehicleType: activeVehicle?.type || "sedan",
-        seatCapacity: activeVehicle?.seatCapacity || 4,
-        distanceKm: 0,
-      });
+            <div>
+                <label className="block">Departure Date</label>
+                <input
+                    type="date"
+                    name="departureDate"
+                    value={formData.departureDate}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
 
-      navigate("/rideboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create ride offer");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+            <div>
+                <label className="block">Departure Time</label>
+                <input
+                    type="time"
+                    name="departureTime"
+                    value={formData.departureTime}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
 
-  const voucherInfo = formData.distanceKm > 0 
-    ? calculateVoucherForTrip(formData.distanceKm, formData.vehicleType)
-    : null;
+            <div>
+                <label className="block">Capacity</label>
+                <input
+                    type="number"
+                    name="capacity"
+                    value={formData.capacity}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    min={1}
+                />
+            </div>
 
-  return (
-    <div className="ride-offer-form">
-      <h2>Offer a Ride</h2>
-      
-      {error && <div className="error-message">{error}</div>}
-      
-      <form onSubmit={handleSubmit}>
-        <Input
-          label="From"
-          placeholder="Starting location"
-          value={formData.origin}
-          onChange={(e) => handleInputChange("origin", e.target.value)}
-        />
-        
-        <Input
-          label="To"
-          placeholder="Destination"
-          value={formData.destination}
-          onChange={(e) => handleInputChange("destination", e.target.value)}
-        />
-        
-        <Input
-          label="Departure Date & Time"
-          type="datetime-local"
-          value={formData.departureDateTime}
-          onChange={(e) => handleInputChange("departureDateTime", e.target.value)}
-        />
-        
-        <div className="input-group">
-          <label className="input-label">Vehicle Type</label>
-          <select 
-            value={formData.vehicleType}
-            onChange={(e) => handleInputChange("vehicleType", e.target.value as VehicleType)}
-            className="input-field"
-          >
-            <option value="motorcycle">Motorcycle</option>
-            <option value="sedan">Sedan</option>
-            <option value="compact">Compact</option>
-            <option value="suv">SUV</option>
-            <option value="pickup">Pickup</option>
-          </select>
-        </div>
-        
-        <Input
-          label="Available Seats"
-          type="number"
-          value={formData.seatCapacity.toString()}
-          onChange={(e) => handleInputChange("seatCapacity", parseInt(e.target.value) || 1)}
-        />
-        
-        <Input
-          label="Distance (KM)"
-          type="number"
-          placeholder="Enter trip distance in kilometers"
-          value={formData.distanceKm.toString()}
-          onChange={(e) => handleInputChange("distanceKm", parseInt(e.target.value) || 0)}
-        />
-        
-        {voucherInfo && (
-          <div className="voucher-preview">
-            <h3>Voucher Requirement</h3>
-            <p><strong>{voucherInfo.size}</strong> coffee voucher required</p>
-            <p className="voucher-description">{voucherInfo.description}</p>
-          </div>
-        )}
-        
-        <div className="form-actions">
-          <Button 
-            type="submit" 
-            disabled={isSubmitting || !user}
-          >
-            {isSubmitting ? "Creating Offer..." : "Offer Ride"}
-          </Button>
-          <Button 
-            type="button" 
-            variant="secondary" 
-            onClick={() => navigate("/")}
-          >
-            Cancel
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
+            <div>
+                <label className="block">Vehicle Type</label>
+                <input
+                    type="text"
+                    name="vehicleType"
+                    value={formData.vehicleType}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                />
+            </div>
+
+            <div>
+                <label className="block">Distance kilometers</label>
+                <input
+                    type="number"
+                    name="kilometerCount"
+                    value={formData.kilometerCount}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    min={0}
+                />
+            </div>
+
+            <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+            >
+                Submit Ride Offer
+            </button>
+        </form>
+    );
 };
 
 export default RideOfferForm;
