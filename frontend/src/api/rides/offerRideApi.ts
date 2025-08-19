@@ -1,19 +1,29 @@
 import api from "../index";
 
 export interface OfferRidePayload {
-    driverId?: string; // Optional fallback for testing
     fromLocation: string;
     toLocation: string;
-    departureTime: string; // ISO date string
+    departure: string;
+    departureTime: string;
     capacity: number;
-    pricePerSeat?: number;
-    voucherRequired: number;
     vehicleType: string;
     distanceKm: number;
 }
 
 export const createOfferRide = async (data: OfferRidePayload) => {
-    const res = await api.post("/ride-offers", data);
+    const userId = localStorage.getItem("userId");
+
+    console.log(userId);
+
+    if (!userId) {
+        throw new Error("No userId found in localStorage. Please login first.");
+    }
+
+    const res = await api.post("/ride-offers", data, {
+        headers: {
+            "x-user-id": userId
+        },
+    });
     return res.data;
 };
 
