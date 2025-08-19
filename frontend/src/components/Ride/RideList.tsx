@@ -13,8 +13,8 @@ const RideList: React.FC = () => {
                 <ul className="space-y-2">
                     {offers.map((ride) => (
                         <li key={ride.id} className="p-3 border rounded">
-                            <p><strong>From:</strong> {ride.from}</p>
-                            <p><strong>To:</strong> {ride.to}</p>
+                            <p><strong>From:</strong> {ride.fromLocation}</p>
+                            <p><strong>To:</strong> {ride.toLocation}</p>
                             <p><strong>Departure:</strong> {new Date(ride.departureTime).toLocaleString()}</p>
                             <p><strong>Seats Available:</strong> {ride.availableSeats}</p>
                             <p><strong>Vehicle:</strong> {ride.vehicleType}</p>

@@ -5,8 +5,8 @@ import type { OfferRidePayload } from "../api/rides/offerRideApi";
 interface RideOffer {
   id: string;
   driverId: string;
-  from: string;
-  to: string;
+  fromLocation: string;
+  toLocation: string;
   departureTime: Date;
   availableSeats: number;
   pricePerSeat: number | null;
@@ -65,8 +65,8 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
       const newOffer: RideOffer = {
         id: res.id,
         driverId: res.driverId,
-        from: res.fromLocation, // BE field
-        to: res.toLocation, // BE field
+        fromLocation: res.fromLocation, // BE field
+        toLocation: res.toLocation, // BE field
         departureTime: res.departureTime,
         availableSeats: res.availableSeats,
         pricePerSeat: res.pricePerSeat,
