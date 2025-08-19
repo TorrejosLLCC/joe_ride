@@ -13,6 +13,10 @@ export const Home: FC = () => {
     navigate("/request-ride");
   }
 
+  const handleRideBoard = () => {
+    navigate("/rideboard");
+  }
+
   return (
     <div className="home-page">
       <h1>Joe Ride</h1>
@@ -20,6 +24,7 @@ export const Home: FC = () => {
       <div className="actions">
         <Button onClick={handleOfferRide}>Offer a Ride</Button>
         <Button onClick={handleRequestRide} variant="secondary">Request a Ride</Button>
+        <Button onClick={handleRideBoard}>Ride board</Button>
       </div>
     </div>
   )

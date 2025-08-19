@@ -55,7 +55,6 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
     };
     fetchOffers();
   }, []);
-  console.log(offers);
 
 
   const addOffer = async (offerData: OfferRidePayload) => {

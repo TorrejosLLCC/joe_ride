@@ -63,7 +63,7 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
 
   // const signOut = () => setUser(null);
   const signOut = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     setUser(null);
   };
 
