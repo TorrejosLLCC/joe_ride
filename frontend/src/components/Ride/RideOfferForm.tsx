@@ -1,52 +1,160 @@
-import type { FC } from "react";
-import { Button } from "../UI/Button";
+import React, { useState } from "react";
+import { useRides } from "../../store/rides-context";
 
-import { useNavigate } from "react-router-dom";
+const RideOfferForm: React.FC = () => {
+    const { addOffer } = useRides();
 
-const RideOfferForm: FC = () => {
-    const navigate = useNavigate();
 
-    const handleOfferRide = () => {
-        navigate("/offer-ride");
-    }
+    const [formData, setFormData] = useState({
+        fromLocation: "",
+        toLocation: "",
+        departureDate: "",
+        departureTime: "",
+        capacity: 1,
+        vehicleType: "",
+        kilometerCount: 0,
+    });
+
+    // handle input changes
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: name === "capacity" || name === "kilometerCount" ? Number(value) : value,
+        }));
+    };
+
+    // submit handler
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const payload = {
+                fromLocation: formData.fromLocation,
+                toLocation: formData.toLocation,
+                departure: `${formData.departureDate}T${formData.departureTime}`,
+                departureTime: formData.departureTime,
+                capacity: formData.capacity,
+                vehicleType: formData.vehicleType,
+                distanceKm: formData.kilometerCount,
+            };
+            await addOffer(payload); // send data to backend
+            // alert("Ride offer created successfully!");
+            setFormData({
+                fromLocation: "",
+                toLocation: "",
+                departureDate: "",
+                departureTime: "",
+                capacity: 1,
+                vehicleType: "",
+                kilometerCount: 0,
+            });
+        } catch (error) {
+            console.error("Error creating ride offer:", error);
+            alert("Failed to create ride offer.");
+        }
+    };
+
 
     return (
-        <div className="ride-offer-form-page">
-            <form>
-                <div className="form-group">
-                    <label htmlFor="pickupLocation">Departure Location</label>
-                    <input type="text" id="pickupLocation" name="pickupLocation" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="dropoffLocation">Arrival  Location</label>
-                    <input type="text" id="dropoffLocation" name="dropoffLocation" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="departureTime">Departure Time</label>
-                    <input type="datetime-local" id="departureTime" name="departureTime" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="arrivalTime">Arrival Time</label>
-                    <input type="datetime-local" id="arrivalTime" name="arrivalTime" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="vehicleType">Vehicle Type</label>
-                    <select id="vehicleType" name="vehicleType">
-                        <option value="car">Car</option>
-                        <option value="van">Van</option>
-                        <option value="bus">Bus</option>
-                        <option value="motorcycle">Motorcycle</option>
-                    </select>
-                </div>
+        <form onSubmit={handleSubmit} className="p-4 border rounded space-y-4">
+            <h2 className="text-lg font-bold">Offer a Ride</h2>
 
-                <div className="form-group">
-                    <label htmlFor="seatsAvailable">Seats Available</label>
-                    <input type="number" id="seatsAvailable" name="seatsAvailable" />
-                </div>
-            </form>
-            <Button onClick={handleOfferRide}>Submit</Button>
-        </div>
+            <div>
+                <label className="block">From</label>
+                <input
+                    type="text"
+                    name="fromLocation"
+                    value={formData.fromLocation}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
+
+            <div>
+                <label className="block">To</label>
+                <input
+                    type="text"
+                    name="toLocation"
+                    value={formData.toLocation}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
+
+            <div>
+                <label className="block">Departure Date</label>
+                <input
+                    type="date"
+                    name="departureDate"
+                    value={formData.departureDate}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
+
+            <div>
+                <label className="block">Departure Time</label>
+                <input
+                    type="time"
+                    name="departureTime"
+                    value={formData.departureTime}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    required
+                />
+            </div>
+
+            <div>
+                <label className="block">Capacity</label>
+                <input
+                    type="number"
+                    name="capacity"
+                    value={formData.capacity}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    min={1}
+                />
+            </div>
+
+            <div>
+                <label className="block">Vehicle Type</label>
+                <input
+                    type="text"
+                    name="vehicleType"
+                    value={formData.vehicleType}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                />
+            </div>
+
+            <div>
+                <label className="block">Distance kilometers</label>
+                <input
+                    type="number"
+                    name="kilometerCount"
+                    value={formData.kilometerCount}
+                    onChange={handleChange}
+                    className="border p-2 w-full"
+                    min={0}
+                />
+            </div>
+
+            <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+            >
+                Submit Ride Offer
+            </button>
+        </form>
     );
 };
+
 export default RideOfferForm;
 
