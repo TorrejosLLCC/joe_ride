@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, type FC } from "react";
+import { createOfferRide } from "../api/rides/offerRideApi";
+import type { OfferRidePayload } from "../api/rides/offerRideApi";
 
 interface RideOffer {
   id: string;
@@ -8,9 +10,19 @@ interface RideOffer {
   departureTime: Date;
   availableSeats: number;
   pricePerSeat: number;
-  voucherRequired: number;
-  vehicleId: string;
+  voucherRequired: boolean;
+  vehicleType: string;
 }
+
+// "fromLocation": "cebu",
+// "toLocation": "lapulapu",
+// "departureTime": "2025-08-20T08:30:00.000Z",
+// "capacity": 5,
+// "pricePerSeat": 500,
+// "voucherRequired": false,
+// "vehicleType": "van",
+// "distanceKm": 20.1
+
 
 interface RideRequest {
   id: string;
@@ -25,7 +37,7 @@ interface RideRequest {
 interface RidesContextType {
   offers: RideOffer[];
   requests: RideRequest[];
-  addOffer: (offer: Omit<RideOffer, 'id'>) => void;
+  addOffer: (offer: OfferRidePayload) => void;
   addRequest: (request: Omit<RideRequest, 'id'>) => void;
   removeOffer: (id: string) => void;
   removeRequest: (id: string) => void;
@@ -39,12 +51,26 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
   const [offers, setOffers] = useState<RideOffer[]>([]);
   const [requests, setRequests] = useState<RideRequest[]>([]);
 
-  const addOffer = (offerData: Omit<RideOffer, 'id'>) => {
-    const newOffer = {
-      ...offerData,
-      id: crypto.randomUUID(),
-    };
-    setOffers(prev => [...prev, newOffer]);
+  const addOffer = async (offerData: OfferRidePayload) => {
+    try {
+      const res = await createOfferRide(offerData);
+
+      const newOffer: RideOffer = {
+        id: res.id,
+        driverId: res.driverId,
+        from: res.fromLocation, // BE field
+        to: res.toLocation, // BE field
+        departureTime: res.departureTime,
+        availableSeats: res.availableSeats,
+        pricePerSeat: res.pricePerSeat,
+        voucherRequired: res.voucherRequired,
+        vehicleType: res.vehicleType, // adjust
+      };
+
+      setOffers(prev => [...prev, newOffer]);
+    } catch (error) {
+      console.error("Failed to create ride offer", error);
+    }
   };
 
   const addRequest = (requestData: Omit<RideRequest, 'id'>) => {
@@ -64,13 +90,13 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <RidesContext.Provider value={{ 
-      offers, 
-      requests, 
-      addOffer, 
-      addRequest, 
-      removeOffer, 
-      removeRequest 
+    <RidesContext.Provider value={{
+      offers,
+      requests,
+      addOffer,
+      addRequest,
+      removeOffer,
+      removeRequest
     }}>
       {children}
     </RidesContext.Provider>
