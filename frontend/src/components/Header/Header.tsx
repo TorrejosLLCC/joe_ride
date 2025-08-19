@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../store/user-context";
 import { Modal } from "../UI/Modal";
 import { Input } from "../UI/Input";
@@ -10,6 +11,8 @@ interface AuthModeState {
 
 export const Header = () => {
   const { isLoggedIn, user, signOut, signIn, register } = useUser();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [authState, setAuthState] = useState<AuthModeState>({ mode: null });
 
   const [form, setForm] = useState({
@@ -74,13 +77,43 @@ export const Header = () => {
     }
   };
 
+  const navItems = [
+    { path: "/", label: "Home", icon: "🏠" },
+    { path: "/rideboard", label: "Ride Board", icon: "📋" },
+    { path: "/offer-ride", label: "Offer Ride", icon: "🚗", authRequired: true },
+    { path: "/request-ride", label: "Request Ride", icon: "🙋", authRequired: true },
+    { path: "/vouchers", label: "Vouchers", icon: "☕" },
+  ];
+
   return (
     <header className="main-header">
       <div className="logo-area" role="banner">
-        <h1>☕ Joe Ride</h1>
+        <button 
+          className="logo-btn" 
+          onClick={() => navigate("/")}
+          aria-label="Go to home page"
+        >
+          <h1>☕ Joe Ride</h1>
+        </button>
       </div>
+      
       <nav className="main-nav">
-        {/* Future nav links */}
+        {navItems.map(item => {
+          if (item.authRequired && !isLoggedIn) return null;
+          
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.path}
+              className={`nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => navigate(item.path)}
+              aria-label={item.label}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
       <div className="auth-area">
         {!isLoggedIn && (

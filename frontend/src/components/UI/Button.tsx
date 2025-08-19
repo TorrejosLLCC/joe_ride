@@ -5,6 +5,7 @@ interface ButtonProps {
   onClick?: () => void;
   variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -12,9 +13,15 @@ export const Button: FC<ButtonProps> = ({
   onClick,
   variant = "primary",
   disabled = false,
+  type = "button",
 }) => {
   return (
-    <button onClick={onClick} className={`btn ${variant}`} disabled={disabled}>
+    <button 
+      type={type}
+      onClick={onClick} 
+      className={`btn ${variant}`} 
+      disabled={disabled}
+    >
       {children}
     </button>
   );
