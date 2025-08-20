@@ -3,8 +3,8 @@ import api from "../index";
 export interface OfferRidePayload {
     fromLocation: string;
     toLocation: string;
-    departure: string;
-    departureTime: string;
+    departure: string;      // ISO date string
+    departureTime: string;  // ISO date string (backend expects both)
     capacity: number;
     vehicleType: string;
     distanceKm: number;
