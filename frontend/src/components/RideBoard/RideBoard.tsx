@@ -54,15 +54,15 @@ export const RideBoard: React.FC = () => {
     return requests.filter(request => {
       // Date filter (using preferred departure date)
       if (filters.date) {
-        const requestDate = new Date(request.preferredDepartureStart).toDateString();
+        const requestDate = new Date(request.preferredDate).toDateString();
         const filterDate = new Date(filters.date).toDateString();
         if (requestDate !== filterDate) return false;
       }
 
       // Time filters (check if filter time overlaps with request time window)
       if (filters.timeFrom || filters.timeTo) {
-        const requestStartTime = request.preferredDepartureStart;
-        const requestEndTime = request.preferredDepartureEnd;
+        const requestStartTime = request.preferredTimeFrom;
+        const requestEndTime = request.preferredTimeTo;
         
         if (filters.timeFrom && requestEndTime < filters.timeFrom) return false;
         if (filters.timeTo && requestStartTime > filters.timeTo) return false;
@@ -135,7 +135,7 @@ export const RideBoard: React.FC = () => {
           </Button>
         </div>
       </div>
-
+ 
       {showFilters && (
         <RideFilter
           filters={filters}

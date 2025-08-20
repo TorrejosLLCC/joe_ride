@@ -37,8 +37,9 @@ export interface RideRequest {
   passenger: User;
   origin: string;
   destination: string;
-  preferredDepartureStart: string;
-  preferredDepartureEnd: string;
+  preferredDate: string; 
+  preferredTimeFrom: string;   
+  preferredTimeTo: string; 
   distanceKm: number;
   voucherRequirement: VoucherSize;
   status: 'active' | 'matched' | 'completed' | 'cancelled';
@@ -80,9 +81,9 @@ export interface RideOfferForm {
 export interface RideRequestForm {
   origin: string;
   destination: string;
-  preferredDepartureDate: string;
-  preferredDepartureTimeStart: string;
-  preferredDepartureTimeEnd: string;
+  preferredDate: string;
+  preferredTimeFrom: string;
+  preferredTimeTo: string;
   distanceKm: number;
 }
 

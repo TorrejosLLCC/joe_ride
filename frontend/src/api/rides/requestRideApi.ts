@@ -1,24 +1,38 @@
 import api from "../index";
 
 export interface RequestRidePayload {
-    origin: string;
-    destination: string;
-    departureWindowStart: string; // e.g. "15:30"
-    departureWindowEnd: string;   // e.g. "16:15"
-    kilometerCount: number;
-}
+    fromLocation: string;
+    toLocation: string;
+    preferredDate: string;
+    preferredTimeFrom: string;
+    preferredTimeTo: string;
+    voucherRequired: boolean;
+    distanceKm: number;
+  }
 
 export const createRideRequest = async (data: RequestRidePayload) => {
-    const res = await api.post("/rides/request", data);
+    const userId = localStorage.getItem("userId");
+
+    console.log(userId);
+
+    if (!userId) {
+        throw new Error("No userId found in localStorage. Please login first.");
+    }
+    
+    const res = await api.post("ride-requests", data, {
+        headers: {
+            "x-user-id": userId
+        },
+    });
     return res.data;
 };
 
 export const getAllRideRequests = async () => {
-    const res = await api.get("/rides/requests");
+    const res = await api.get("/ride-requests");
     return res.data;
 };
 
-export const getRideRequestById = async (id: string) => {
-    const res = await api.get(`/rides/requests/${id}`);
-    return res.data;
-};
+// export const getRideRequestById = async (id: string) => {
+//     const res = await api.get(`/ride-requests/${id}`);
+//     return res.data;
+// };
