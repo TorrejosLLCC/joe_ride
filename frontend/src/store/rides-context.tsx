@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type FC } from "react";
 import { createOfferRide, getAllRideOffers, type OfferRidePayload } from "../api/rides/offerRideApi";
-// import { createRideRequest, type RequestRidePayload } from "../api/rides/requestRideApi";
+import { createRideRequest, type RequestRidePayload } from "../api/rides/requestRideApi";
 import type { RideOffer, RideRequest, RideOfferForm, RideRequestForm } from "../types";
 import { calculateVoucherRequirement } from "../utils/voucherCalculator";
 
@@ -116,41 +116,39 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const addRequest = async (_requestData: RideRequestForm) => {
+  const addRequest = async (offerData: RideRequestForm) => {
     try {
       setLoading(true);
       setError(null);
-
-      // TODO: Backend ride request endpoint is not implemented yet
-      // For now, just show a message to the user
-      throw new Error("Ride requests are not implemented in the backend yet. Please check back later!");
-
-      // This code will be enabled when backend is ready:
-      // const payload: RequestRidePayload = {
-      //   origin: requestData.origin,
-      //   destination: requestData.destination,
-      //   departureWindowStart: requestData.preferredDepartureTimeStart,
-      //   departureWindowEnd: requestData.preferredDepartureTimeEnd,
-      //   kilometerCount: requestData.distanceKm
-      // };
-
-      // const res = await createRideRequest(payload);
+  
+      // Fix: Properly format date and time strings
+      const payload: RequestRidePayload = {
+        fromLocation: offerData.origin,
+        toLocation: offerData.destination,
+        preferredDate: offerData.preferredDate, // ✅ Use correct field name
+        preferredTimeFrom: offerData.preferredTimeFrom, // ✅ Use correct field name
+        preferredTimeTo: offerData.preferredTimeTo, // ✅ Use correct field name
+        voucherRequired: false,
+        distanceKm: offerData.distanceKm
+      };
+      const res = await createRideRequest(payload);
       
-      // const newRequest: RideRequest = {
-      //   id: res.id,
-      //   passengerId: res.passengerId || res.userId,
-      //   passenger: res.passenger || { id: res.passengerId || res.userId, name: 'You', email: '', isVerified: false, rating: 5 },
-      //   origin: requestData.origin,
-      //   destination: requestData.destination,
-      //   preferredDepartureStart: requestData.preferredDepartureTimeStart,
-      //   preferredDepartureEnd: requestData.preferredDepartureTimeEnd,
-      //   distanceKm: requestData.distanceKm,
-      //   voucherRequirement: calculateVoucherRequirement(requestData.distanceKm, 'sedan'),
-      //   status: 'active',
-      //   createdAt: new Date().toISOString()
-      // };
-
-      // setRequests(prev => [...prev, newRequest]);
+      const newRequest: RideRequest = {
+        id: res.request?.id?.toString() || 'temp-' + Date.now(),
+        passengerId: res.request?.userId?.toString() || 'unknown',
+        passenger: res.request?.user || { id: 'unknown', name: 'You', email: '', isVerified: false, rating: 5 },
+        origin: offerData.origin,
+        destination: offerData.destination,
+        preferredDate: offerData.preferredDate,
+        preferredTimeFrom: offerData.preferredTimeFrom,
+        preferredTimeTo: offerData.preferredTimeTo,
+        voucherRequirement: calculateVoucherRequirement(offerData.distanceKm, 'sedan'),
+        distanceKm: offerData.distanceKm,
+        status: 'active',
+        createdAt: new Date().toISOString()
+      };
+  
+      setRequests(prev => [...prev, newRequest]);
     } catch (err: any) {
       setError(err.message || 'Failed to create ride request');
       throw err;

@@ -14,11 +14,11 @@ const RideRequestForm: React.FC = () => {
     const [formData, setFormData] = useState<RideRequestFormType>({
         origin: "",
         destination: "",
-        preferredDepartureDate: "",
-        preferredDepartureTimeStart: "",
-        preferredDepartureTimeEnd: "",
+        preferredDate: "", // ✅ This is the correct field name
+        preferredTimeFrom: "", // ✅ This is the correct field name
+        preferredTimeTo: "", // ✅ This is the correct field name
         distanceKm: 0,
-    });
+      });
 
     // Calculate voucher requirement for preview
     const voucherRequirement = formData.distanceKm > 0 
@@ -42,9 +42,9 @@ const RideRequestForm: React.FC = () => {
             setFormData({
                 origin: "",
                 destination: "",
-                preferredDepartureDate: "",
-                preferredDepartureTimeStart: "",
-                preferredDepartureTimeEnd: "",
+                preferredDate: "",
+                preferredTimeFrom: "",
+                preferredTimeTo: "",
                 distanceKm: 0,
             });
             
@@ -84,22 +84,22 @@ const RideRequestForm: React.FC = () => {
                 <Input
                     label="Preferred Date"
                     type="date"
-                    value={formData.preferredDepartureDate}
-                    onChange={(e) => setFormData(prev => ({ ...prev, preferredDepartureDate: e.target.value }))}
+                    value={formData.preferredDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, preferredDate: e.target.value }))}
                 />
 
                 <Input
                     label="Preferred Time (From)"
                     type="time"
-                    value={formData.preferredDepartureTimeStart}
-                    onChange={(e) => setFormData(prev => ({ ...prev, preferredDepartureTimeStart: e.target.value }))}
+                    value={formData.preferredTimeFrom}
+                    onChange={(e) => setFormData(prev => ({ ...prev, preferredTimeFrom: e.target.value }))}
                 />
 
                 <Input
                     label="Preferred Time (To)"
                     type="time"
-                    value={formData.preferredDepartureTimeEnd}
-                    onChange={(e) => setFormData(prev => ({ ...prev, preferredDepartureTimeEnd: e.target.value }))}
+                    value={formData.preferredTimeTo}
+                    onChange={(e) => setFormData(prev => ({ ...prev, preferredTimeTo: e.target.value }))}
                 />
 
                 <Input

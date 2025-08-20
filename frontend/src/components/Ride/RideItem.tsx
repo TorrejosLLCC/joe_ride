@@ -77,9 +77,9 @@ export const RideItem: React.FC<RideItemProps> = ({
                 <span className="label">Preferred Time:</span>
                 <span className="value">
                   {formatTimeRange(
-                    rideRequest.preferredDepartureStart,
-                    rideRequest.preferredDepartureEnd,
-                    rideRequest.preferredDepartureStart
+                    rideRequest.preferredDate,
+                    rideRequest.preferredTimeFrom,
+                    rideRequest.preferredTimeTo,
                   )}
                 </span>
               </div>
