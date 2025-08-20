@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { RideOffersModule } from './ride-offers/ride-offers.module';
 import { RideOffer } from './ride-offers/entities/ride-offer.entity';
+import { RideRequestModule } from './ride-request/ride-request.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { RideOffer } from './ride-offers/entities/ride-offer.entity';
     }),
     AuthModule,
     UsersModule,
-    RideOffersModule
+    RideOffersModule,
+    RideRequestModule
   ],
   controllers: [AppController],
   providers: [AppService],
