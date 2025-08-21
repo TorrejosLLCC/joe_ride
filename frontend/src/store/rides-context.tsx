@@ -39,7 +39,18 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
       const transformedOffers: RideOffer[] = offersData.map((offer: any) => ({
         id: offer.id.toString(),
         driverId: offer.driverId.toString(),
-        driver: offer.driver || { id: offer.driverId.toString(), name: 'Unknown Driver', email: '', isVerified: false, rating: 5 },
+        driver: {
+          id: offer.driver.id.toString(),
+          name: offer.driver.fullName,
+          email: offer.driver.email,
+          isVerified: offer.driver.isVerified ?? false,
+          rating: offer.driver.rating ?? 0,
+          dateOfBirth: offer.driver.dateOfBirth,
+          homeAddress: offer.driver.homeAddress,
+          mobilePhoneNumber: offer.driver.mobilePhoneNumber,
+          vehicleType: offer.driver.vehicleType,
+          vehiclePlate: offer.driver.vehiclePlate
+        },
         origin: offer.fromLocation,
         destination: offer.toLocation,
         departureDateTime: offer.departureTime, // Backend sends full datetime
