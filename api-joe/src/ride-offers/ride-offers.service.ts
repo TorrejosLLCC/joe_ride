@@ -34,6 +34,7 @@ export class RideOffersService {
         return this.repo.find({
             where: { status: RideOfferStatus.OPEN },
             order: { createdAt: 'DESC' },
+            relations: ['driver'],
         });
     }
 
