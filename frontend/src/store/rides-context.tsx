@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type FC } from "react";
 import { createOfferRide, getAllRideOffers, type OfferRidePayload } from "../api/rides/offerRideApi";
-import { createRideRequest, type RequestRidePayload } from "../api/rides/requestRideApi";
+import { createRideRequest, type RequestRidePayload, getAllRideRequests } from "../api/rides/requestRideApi";
 import type { RideOffer, RideRequest, RideOfferForm, RideRequestForm } from "../types";
 import { calculateVoucherRequirement } from "../utils/voucherCalculator";
 
@@ -31,7 +31,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
     try {
       setLoading(true);
       setError(null);
-      
+
       // For now, only fetch ride offers since ride requests endpoint doesn't exist yet
       const offersData = await getAllRideOffers();
 
@@ -39,7 +39,18 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
       const transformedOffers: RideOffer[] = offersData.map((offer: any) => ({
         id: offer.id.toString(),
         driverId: offer.driverId.toString(),
-        driver: offer.driver || { id: offer.driverId.toString(), name: 'Unknown Driver', email: '', isVerified: false, rating: 5 },
+        driver: {
+          id: offer.driver.id.toString(),
+          name: offer.driver.fullName,
+          email: offer.driver.email,
+          isVerified: offer.driver.isVerified ?? false,
+          rating: offer.driver.rating ?? 0,
+          dateOfBirth: offer.driver.dateOfBirth,
+          homeAddress: offer.driver.homeAddress,
+          mobilePhoneNumber: offer.driver.mobilePhoneNumber,
+          vehicleType: offer.driver.vehicleType,
+          vehiclePlate: offer.driver.vehiclePlate
+        },
         origin: offer.fromLocation,
         destination: offer.toLocation,
         departureDateTime: offer.departureTime, // Backend sends full datetime
@@ -53,11 +64,38 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
         createdAt: offer.createdAt || new Date().toISOString()
       }));
 
-      // For now, set empty requests array since endpoint doesn't exist
-      const transformedRequests: RideRequest[] = [];
+      const requestsData = await getAllRideRequests();
+      // Transform backend data to frontend format
+      const transformedRequests: RideRequest[] = [] = requestsData.map((request: any) => ({
+        id: request.id.toString(),
+        passengerId: request.userId.toString(),
+        passenger: {
+          id: request.user.id.toString(),
+          name: request.user.fullName,
+          email: request.user.email,
+          isVerified: request.user.isVerified ?? false,
+          rating: request.user.rating ?? 0,
+          dateOfBirth: request.user.dateOfBirth,
+          homeAddress: request.user.homeAddress,
+          mobilePhoneNumber: request.user.mobilePhoneNumber,
+          vehicleType: request.user.vehicleType,
+          vehiclePlate: request.user.vehiclePlate,
+          driversLicenseNumber: request.user.driversLicenseNumber,
+        },
+        origin: request.fromLocation,
+        destination: request.toLocation,
+        preferredDate: request.preferredDate,
+        preferredTimeFrom: request.preferredTimeFrom,
+        preferredTimeTo: request.preferredTimeTo,
+        distanceKm: request.distanceKm,
+        voucherRequirement: calculateVoucherRequirement(request.distanceKm, request.vehicleType || 'sedan'), // fallback to
+        status: request.status,
+        createdAt: request.createdAt || new Date().toISOString()
+      }));
 
       setOffers(transformedOffers);
       setRequests(transformedRequests);
+      // console.log("testing requests are:", transformedRequests);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch rides');
       console.error('Failed to fetch rides:', err);
@@ -85,7 +123,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
       };
 
       const res = await createOfferRide(payload);
-      
+
       // Add the new offer to the state
       const newOffer: RideOffer = {
         id: res.offer?.id?.toString() || res.id?.toString() || 'temp-' + Date.now(),
@@ -105,7 +143,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
       };
 
       setOffers(prev => [...prev, newOffer]);
-      
+
       // Refresh the rides list to get the latest data from backend
       await fetchAllRides();
     } catch (err: any) {
@@ -120,7 +158,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
     try {
       setLoading(true);
       setError(null);
-  
+
       // Fix: Properly format date and time strings
       const payload: RequestRidePayload = {
         fromLocation: offerData.origin,
@@ -132,7 +170,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
         distanceKm: offerData.distanceKm
       };
       const res = await createRideRequest(payload);
-      
+
       const newRequest: RideRequest = {
         id: res.request?.id?.toString() || 'temp-' + Date.now(),
         passengerId: res.request?.userId?.toString() || 'unknown',
@@ -147,7 +185,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
         status: 'active',
         createdAt: new Date().toISOString()
       };
-  
+
       setRequests(prev => [...prev, newRequest]);
     } catch (err: any) {
       setError(err.message || 'Failed to create ride request');
@@ -169,7 +207,7 @@ export const RidesProvider: FC<{ children: React.ReactNode }> = ({
     try {
       setLoading(true);
       setError(null);
-      
+
       // TODO: Implement API call to join ride
       // For now, just update local state
       setOffers(prev => prev.map(offer => {

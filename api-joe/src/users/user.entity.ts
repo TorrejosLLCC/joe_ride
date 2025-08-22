@@ -58,6 +58,11 @@ export class User {
     @OneToMany(() => RideOffer, rideOffer => rideOffer.driver)
     rideOffers: RideOffer[];
 
+    @OneToMany(() => RideRequest, (rideRequest) => rideRequest.user)
+    rideRequests: RideRequest[];
+
+
+
     // 1 user can have one ride request
     @OneToOne(() => RideRequest, rideRequest => rideRequest.user)
     rideRequest: RideRequest;

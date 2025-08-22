@@ -9,7 +9,7 @@ export class RideRequestService {
     constructor(
         @InjectRepository(RideRequest)
         private readonly repo: Repository<RideRequest>,
-    ) {}
+    ) { }
 
     async create(userId: string, dto: CreateRideRequestDto) {
         const request = this.repo.create({
@@ -28,6 +28,7 @@ export class RideRequestService {
     async findAll() {
         return this.repo.find({
             order: { createdAt: 'DESC' }, // Newest first
+            relations: ['user'],
         });
     }
 
