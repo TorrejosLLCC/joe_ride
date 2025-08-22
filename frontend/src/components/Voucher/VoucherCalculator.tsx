@@ -6,7 +6,7 @@ import { calculateVoucherRequirement } from "../../utils/voucherCalculator";
 
 export const VoucherCalculator: React.FC = () => {
   const [distanceKm, setDistanceKm] = useState<number>(0);
-  const [vehicleType, setVehicleType] = useState<VehicleType>('sedan');
+  const [vehicleType, setVehicleType] = useState<VehicleType>('Car');
 
   const voucherSize = distanceKm > 0 ? calculateVoucherRequirement(distanceKm, vehicleType) : null;
 
@@ -31,10 +31,10 @@ export const VoucherCalculator: React.FC = () => {
             className="input-field"
           >
             <option value="motorcycle">Motorcycle</option>
-            <option value="sedan">Sedan/Car</option>
-            <option value="compact">Compact/Hatchback</option>
-            <option value="suv">SUV/Van</option>
-            <option value="pickup">Pickup/Truck</option>
+            <option value="car">Car</option>
+            <option value="suv">SUV</option>
+            <option value="truck">Truck</option>
+            <option value="scooter">Scooter</option>
           </select>
         </div>
       </div>

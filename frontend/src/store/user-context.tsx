@@ -5,9 +5,13 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  homeAddress: string;
+  mobilePhoneNumber: string;
   isVerified: boolean;
   rating: number;
   vehicleType?: string;
+  vehiclePlate?: string;
+  driversLicenseNumber?: string;
 }
 
 export interface RegisterInput {
@@ -87,6 +91,11 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       id: res.id,
       name: res.fullName ?? res.name,
       email: res.email,
+      homeAddress: res.homeAddress ?? "",
+      mobilePhoneNumber: res.mobilePhoneNumber ?? "",
+      vehiclePlate: res.vehiclePlate ?? "",
+      driversLicenseNumber: res.driversLicenseNumber ?? "",
+      vehicleType: res.vehicleType ?? "", // Default to "Car" if not provided
       isVerified: res.isVerified ?? false,
       rating: res.rating ?? 5,
     };
@@ -104,6 +113,10 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       id: res.user.id,
       name: res.user.fullName ?? res.user.name,
       email: res.user.email,
+      homeAddress: res.user.homeAddress ?? "",
+      mobilePhoneNumber: res.user.mobilePhoneNumber ?? "",
+      vehiclePlate: res.user.vehiclePlate ?? "",
+      driversLicenseNumber: res.user.driversLicenseNumber ?? "",
       vehicleType: res.user.vehicleType,
       isVerified: res.user.isVerified ?? false,
       rating: res.user.rating ?? 5,

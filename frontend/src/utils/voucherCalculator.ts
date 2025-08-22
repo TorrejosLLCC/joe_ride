@@ -1,36 +1,36 @@
 import type { VoucherSize, VehicleType } from "../types";
 
 // Voucher requirement matrix based on distance + vehicle type
-const VOUCHER_MATRIX: Record<VehicleType, Record<VoucherSize, number>> = {
-  motorcycle: {
+const VOUCHER_MATRIX: Record<string, Record<VoucherSize, number>> = {
+  Motorcycle: {
     short: 5,
     tall: 8,
     grande: 12,
     venti: 18,
     trenta: 24
   },
-  sedan: {
+  Car: {
     short: 3,
     tall: 5,
     grande: 9,
     venti: 14,
     trenta: 18
   },
-  compact: {
+  SUV: {
     short: 3,
     tall: 5,
     grande: 9,
     venti: 14,
     trenta: 18
   },
-  suv: {
+  Truck: {
     short: 2,
     tall: 3,
     grande: 5,
     venti: 10,
     trenta: 14
   },
-  pickup: {
+  Scooter: {
     short: 2,
     tall: 3,
     grande: 5,
@@ -57,7 +57,8 @@ export function calculateVoucherRequirement(distanceKm: number, vehicleType: Veh
 }
 
 export function getVoucherDistance(voucherSize: VoucherSize, vehicleType: VehicleType): number {
-  return VOUCHER_MATRIX[vehicleType][voucherSize];
+  const normalizedVehicleType = normalizeVehicleType(vehicleType);
+  return VOUCHER_MATRIX[normalizedVehicleType][voucherSize];
 }
 
 export function getAllVoucherSizes(): VoucherSize[] {
@@ -69,23 +70,19 @@ function normalizeVehicleType(vehicleType: VehicleType | string): VehicleType {
   
   switch (type) {
     case 'motorcycle':
-    case 'bike':
-    case 'motorbike':
-      return 'motorcycle';
-    case 'sedan':
+      return 'Motorcycle';
     case 'car':
-      return 'sedan';
-    case 'compact':
-    case 'hatchback':
-      return 'compact';
+      return 'Car';
     case 'suv':
-    case 'van':
-      return 'suv';
-    case 'pickup':
+      return 'SUV';
     case 'truck':
-      return 'pickup';
+      return 'Truck';
+    case 'bicycle':
+      return 'Bicycle';
+    case 'scooter':
+      return 'Scooter';
     default:
-      return 'sedan'; // Default fallback
+      return 'Car'; // Default fallback
   }
 }
 

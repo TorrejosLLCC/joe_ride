@@ -12,7 +12,7 @@ interface VoucherDisplayProps {
 
 export const VoucherDisplay: React.FC<VoucherDisplayProps> = ({
   size,
-  vehicleType = 'sedan',
+  vehicleType = 'Car' as VehicleType,
   distanceKm,
   className = ''
 }) => {

@@ -164,6 +164,7 @@ export const Header = () => {
     { path: "/offer-ride", label: "Offer Ride", icon: "🚗", authRequired: true },
     { path: "/request-ride", label: "Request Ride", icon: "🙋", authRequired: true },
     { path: "/vouchers", label: "Vouchers", icon: "☕" },
+    // { path: "/profile", label: "Profile", icon: "👤", authRequired: true },
   ];
 
   return (

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { VoucherCalculator } from "../components/Voucher/VoucherCalculator";
 import { VoucherDisplay } from "../components/Voucher/VoucherDisplay";
-import type { VoucherSize } from "../types";
+import type { VoucherSize, VehicleType } from "../types";
 
 export const VoucherSummary: FC = () => {
   const voucherSizes: VoucherSize[] = ['short', 'tall', 'grande', 'venti', 'trenta'];
@@ -24,7 +24,7 @@ export const VoucherSummary: FC = () => {
             <VoucherDisplay 
               key={size} 
               size={size} 
-              vehicleType="sedan"
+              vehicleType="Car"
             />
           ))}
         </div>
