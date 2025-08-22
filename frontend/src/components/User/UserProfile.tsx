@@ -88,13 +88,21 @@ export const ProfilePage = () => {
     
     if (!user) return;
     
-    // Validate password if provided
+    // Validate password only if user wants to change it
     if (formData.password || formData.confirmPassword) {
+      if (!formData.password && formData.confirmPassword) {
+        alert("Please enter a new password if you want to change it!");
+        return;
+      }
+      if (formData.password && !formData.confirmPassword) {
+        alert("Please confirm your new password!");
+        return;
+      }
       if (formData.password !== formData.confirmPassword) {
         alert("Passwords do not match!");
         return;
       }
-      if (formData.password.length < 8) {
+      if (formData.password && formData.password.length < 8) {
         alert("Password must be at least 8 characters long!");
         return;
       }
@@ -273,6 +281,7 @@ export const ProfilePage = () => {
                         value={formData.password}
                         onChange={handleInputChange('password')}
                         placeholder="Leave empty to keep current password"
+                        required={false}
                       />
                     </div>
                     
@@ -283,6 +292,7 @@ export const ProfilePage = () => {
                         value={formData.confirmPassword}
                         onChange={handleInputChange('confirmPassword')}
                         placeholder="Confirm new password"
+                        required={false}
                       />
                     </div>
                   </>
