@@ -21,7 +21,7 @@ export interface RideOffer {
   origin: string;
   destination: string;
   departureDateTime: string;
-  vehicleType: string;
+  vehicleType: VehicleType;
   seatCapacity: number;
   availableSeats: number;
   distanceKm: number;
@@ -56,7 +56,7 @@ export interface RidePassenger {
 }
 
 // Vehicle types
-export type VehicleType = 'motorcycle' | 'sedan' | 'compact' | 'suv' | 'pickup';
+export type VehicleType = 'Car' | 'SUV' | 'Motorcycle' | 'Truck' | 'Bicycle' | 'Scooter';
 
 // Voucher types
 export type VoucherSize = 'short' | 'tall' | 'grande' | 'venti' | 'trenta';

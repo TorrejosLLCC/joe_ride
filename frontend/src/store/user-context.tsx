@@ -7,6 +7,7 @@ export interface User {
   email: string;
   isVerified: boolean;
   rating: number;
+  vehicleType?: string;
 }
 
 export interface RegisterInput {
@@ -103,6 +104,7 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       id: res.user.id,
       name: res.user.fullName ?? res.user.name,
       email: res.user.email,
+      vehicleType: res.user.vehicleType,
       isVerified: res.user.isVerified ?? false,
       rating: res.user.rating ?? 5,
     };

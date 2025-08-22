@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRides } from "../../store/rides-context";
 import { useUser } from "../../store/user-context";
 import { Input } from "../UI/Input";
+import { Select } from "../UI/Select";
 import { Button } from "../UI/Button";
 import type { RideOfferForm as RideOfferFormType, VehicleType } from "../../types";
 import { calculateVoucherRequirement, formatVoucherSize } from "../../utils/voucherCalculator";
 
 const RideOfferForm: React.FC = () => {
     const { addOffer, loading } = useRides();
-    const { isLoggedIn } = useUser();
+    const { user, isLoggedIn } = useUser();
     const [error, setError] = useState<string | null>(null);
 
     const [formData, setFormData] = useState<RideOfferFormType>({
@@ -16,21 +17,47 @@ const RideOfferForm: React.FC = () => {
         destination: "",
         departureDate: "",
         departureTime: "",
-        vehicleType: "sedan",
+        vehicleType: "Car", // This will be updated in useEffect
         seatCapacity: 1,
         distanceKm: 0,
     });
 
-    // Handle input changes
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
+    // Add this helper function in your RideOfferForm
+    const mapBackendToFrontendVehicleType = (backendType: string): VehicleType => {
+        switch (backendType?.toLowerCase()) {
+          case 'sedan':
+            return 'Car';
+          case 'suv':
+            return 'SUV';
+          case 'motorcycle':
+            return 'Motorcycle';
+          case 'pickup':
+            return 'Truck';
+          default:
+            return 'Car';
+        }
+      };
+
+    // Then in your useEffect:
+    useEffect(() => {
+        if (user?.vehicleType) {
+        setFormData(prev => ({
             ...prev,
-            [name]: name === "seatCapacity" || name === "distanceKm" ? Number(value) : value,
+            vehicleType: mapBackendToFrontendVehicleType(user.vehicleType!)
         }));
-    };
+        }
+    }, [user]);
+
+    // // Handle input changes
+    // const handleChange = (
+    //     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    // ) => {
+    //     const { name, value } = e.target;
+    //     setFormData((prev) => ({
+    //         ...prev,
+    //         [name]: name === "seatCapacity" || name === "distanceKm" ? Number(value) : value,
+    //     }));
+    // };
 
     // Calculate voucher requirement for preview
     const voucherRequirement = formData.distanceKm > 0 && formData.vehicleType 
@@ -56,7 +83,7 @@ const RideOfferForm: React.FC = () => {
                 destination: "",
                 departureDate: "",
                 departureTime: "",
-                vehicleType: "sedan",
+                vehicleType: "Car",
                 seatCapacity: 1,
                 distanceKm: 0,
             });
@@ -108,7 +135,7 @@ const RideOfferForm: React.FC = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, departureTime: e.target.value }))}
                 />
 
-                <div className="input-group">
+                {/* <div className="input-group">
                     <label className="input-label">Vehicle Type</label>
                     <select
                         name="vehicleType"
@@ -116,13 +143,30 @@ const RideOfferForm: React.FC = () => {
                         onChange={handleChange}
                         className="input-field"
                     >
-                        <option value="motorcycle">Motorcycle</option>
-                        <option value="sedan">Sedan/Car</option>
-                        <option value="compact">Compact/Hatchback</option>
-                        <option value="suv">SUV/Van</option>
-                        <option value="pickup">Pickup/Truck</option>
+                        <option value="Car">Car</option>
+                        <option value="Motorcycle">Motorcycle</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Truck">Truck</option>
+                        <option value="Bicycle">Bicycle</option>
+                        <option value="Scooter">Scooter</option>
                     </select>
-                </div>
+                </div> */}
+
+                <Select
+                    label="Vehicle Type"
+                    value={formData.vehicleType}
+                    onChange={(e) => setFormData(prev => ({ ...prev, vehicleType: e.target.value as VehicleType }))}
+                    options={[
+                        { value: "Car", label: "Car" },
+                        { value: "Motorcycle", label: "Motorcycle" },
+                        { value: "SUV", label: "SUV" },
+                        { value: "Truck", label: "Truck" },
+                        { value: "Bicycle", label: "Bicycle" },
+                        { value: "Scooter", label: "Scooter" },
+                    ]}
+                    placeholder="Select vehicle type..."
+                    required={true}
+                />
 
                 <Input
                     label="Seat Capacity"

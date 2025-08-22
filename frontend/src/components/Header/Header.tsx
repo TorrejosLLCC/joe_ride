@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../store/user-context";
 import { Modal } from "../UI/Modal";
 import { Input } from "../UI/Input";
+import { Select } from "../UI/Select";
 import { Button } from "../UI/Button";
 
 interface AuthModeState {
@@ -40,7 +41,7 @@ export const Header = () => {
       dateOfBirth: "",
       homeAddress: "",
       mobilePhoneNumber: "",
-      vehicleType: "",
+      vehicleType: user?.vehicleType || "",
       vehiclePlate: "",
       driversLicenseNumber: "",
     });
@@ -104,9 +105,9 @@ export const Header = () => {
         }
 
         // Check email format
-      if (!isValidEmail(form.email)) {
-        return "Please enter a valid email address";
-      }
+        if (!isValidEmail(form.email)) {
+          return "Please enter a valid email address";
+        }
 
         // Check password match
         if (form.password !== form.confirmPassword) {
@@ -242,11 +243,20 @@ export const Header = () => {
               value={form.mobilePhoneNumber}
               onChange={(e) => setForm(f => ({ ...f, mobilePhoneNumber: e.target.value }))}
             />
-            <Input
+            <Select
               label="Vehicle Type"
-              placeholder="Car, Motorcycle..."
               value={form.vehicleType}
               onChange={(e) => setForm(f => ({ ...f, vehicleType: e.target.value }))}
+              options={[
+                { value: "Car", label: "Car" },
+                { value: "Motorcycle", label: "Motorcycle" },
+                { value: "SUV", label: "SUV" },
+                { value: "Truck", label: "Truck" },
+                { value: "Bicycle", label: "Bicycle" },
+                { value: "Scooter", label: "Scooter" },
+              ]}
+              placeholder="Select vehicle type..."
+              required={true}
             />
             <Input
               label="Vehicle Plate"
