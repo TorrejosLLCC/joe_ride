@@ -1,9 +1,14 @@
 import api from "../index";
 
 export interface UpdateUserPayload {
-    name?: string;
+    fullName?: string;
     email?: string;
-    phone?: string;
+    homeAddress?: string;
+    mobilePhoneNumber?: string;
+    vehicleType?: string;
+    vehiclePlate?: string;
+    driversLicenseNumber?: string;
+    password?: string;
 }
 
 export const getUserById = async (id: string) => {

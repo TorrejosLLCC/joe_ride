@@ -7,6 +7,7 @@ interface SelectProps {
   options: { value: string; label: string }[];
   placeholder?: string;
   required?: boolean;
+  disabled?: boolean;
 }
 
 export const Select: FC<SelectProps> = ({ 
@@ -15,7 +16,8 @@ export const Select: FC<SelectProps> = ({
   onChange, 
   options, 
   placeholder = "Select an option...",
-  required = true 
+  required = true,
+  disabled = false 
 }) => {
   return (
     <div className="input-group">
@@ -25,6 +27,7 @@ export const Select: FC<SelectProps> = ({
         value={value}
         onChange={onChange}
         required={required}
+        disabled={disabled}
       >
         <option value="">{placeholder}</option>
         {options.map(option => (

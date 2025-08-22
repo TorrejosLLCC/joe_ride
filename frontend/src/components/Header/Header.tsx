@@ -164,7 +164,7 @@ export const Header = () => {
     { path: "/offer-ride", label: "Offer Ride", icon: "🚗", authRequired: true },
     { path: "/request-ride", label: "Request Ride", icon: "🙋", authRequired: true },
     { path: "/vouchers", label: "Vouchers", icon: "☕" },
-    // { path: "/profile", label: "Profile", icon: "👤", authRequired: true },
+    { path: "/profile", label: "Profile", icon: "👤", authRequired: true },
   ];
 
   return (
@@ -225,24 +225,28 @@ export const Header = () => {
               placeholder="Jane Rider"
               value={form.name}
               onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
+              autoComplete="name"
             />
             <Input
               label="Date of Birth"
               type="date"
               value={form.dateOfBirth}
               onChange={(e) => setForm(f => ({ ...f, dateOfBirth: e.target.value }))}
+              autoComplete="bday"
             />
             <Input
               label="Home Address"
               placeholder="123 Main St"
               value={form.homeAddress}
               onChange={(e) => setForm(f => ({ ...f, homeAddress: e.target.value }))}
+              autoComplete="street-address"
             />
             <Input
               label="Mobile Phone Number"
               placeholder="09123456789"
               value={form.mobilePhoneNumber}
               onChange={(e) => setForm(f => ({ ...f, mobilePhoneNumber: e.target.value }))}
+              autoComplete="tel"
             />
             <Select
               label="Vehicle Type"
@@ -264,12 +268,14 @@ export const Header = () => {
               placeholder="ABC123"
               value={form.vehiclePlate}
               onChange={(e) => setForm(f => ({ ...f, vehiclePlate: e.target.value }))}
+              autoComplete="off"
             />
             <Input
               label="Driver’s License Number"
               placeholder="DL123456"
               value={form.driversLicenseNumber}
               onChange={(e) => setForm(f => ({ ...f, driversLicenseNumber: e.target.value }))}
+              autoComplete="off"
             />
           </>
         )}
@@ -281,6 +287,7 @@ export const Header = () => {
           placeholder="you@example.com"
           value={form.email}
           onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))}
+          autoComplete="email"
         />
         <Input
           label="Password"

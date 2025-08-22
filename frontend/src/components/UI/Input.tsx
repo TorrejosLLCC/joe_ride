@@ -7,6 +7,9 @@ interface InputProps {
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   label?: string;
+  disabled?: boolean;
+  autoComplete?: string;
+  className?: string;
 }
 
 export const Input: FC<InputProps> = ({
@@ -16,9 +19,12 @@ export const Input: FC<InputProps> = ({
   value,
   onChange,
   label,
+  disabled = false,
+  autoComplete,
+  className,
 }) => {
   return (
-    <div className="input-group">
+    <div className={`input-group ${className || ''}`}>
       {label && <label className="input-label">{label}</label>}
       <input
         required={required}
@@ -26,6 +32,8 @@ export const Input: FC<InputProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
+        autoComplete={autoComplete}
         className="input-field"
       />
     </div>

@@ -1,10 +1,10 @@
 import type { FC } from "react";
+import { ProfilePage } from "../components/User/UserProfile";
 
 export const UserProfile: FC = () => {
   return (
     <div className="user-profile-page">
-      <h1>User Profile</h1>
-      <UserProfile />
+      <ProfilePage />
     </div>
   );
 };

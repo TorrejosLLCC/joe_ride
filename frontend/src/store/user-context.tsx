@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type FC } from "react";
 import { login, registerApi } from "../api/auth/authApi";
+import { updateUser, type UpdateUserPayload } from "../api/user/userApi";
 
 export interface User {
   id: string;
@@ -33,6 +34,7 @@ interface UserContextType {
   signOut: () => void;
   register: (data: RegisterInput) => Promise<User>;
   signIn: (data: { email: string; password: string }) => Promise<User>;
+  updateProfile: (data: UpdateUserPayload) => Promise<User>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -130,8 +132,52 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
 
   };
 
+  const updateProfile = async (data: UpdateUserPayload): Promise<User> => {
+    if (!user) {
+      throw new Error("No user logged in");
+    }
+
+    try {
+      // Prepare update data, excluding empty password
+      const updateData: UpdateUserPayload = {
+        fullName: data.fullName,
+        email: data.email,
+        homeAddress: data.homeAddress,
+        mobilePhoneNumber: data.mobilePhoneNumber,
+        vehicleType: data.vehicleType,
+        vehiclePlate: data.vehiclePlate,
+        driversLicenseNumber: data.driversLicenseNumber,
+      };
+      
+      // Only include password if it's provided and not empty
+      if (data.password && data.password.trim() !== '') {
+        updateData.password = data.password;
+      }
+
+      const updatedUserData = await updateUser(user.id, updateData);
+
+      // Map the backend response to our User type
+      const updatedUser: User = {
+        ...user,
+        name: updatedUserData.fullName || updatedUserData.name || user.name,
+        email: updatedUserData.email || user.email,
+        homeAddress: updatedUserData.homeAddress || user.homeAddress,
+        mobilePhoneNumber: updatedUserData.mobilePhoneNumber || user.mobilePhoneNumber,
+        vehicleType: updatedUserData.vehicleType || user.vehicleType,
+        vehiclePlate: updatedUserData.vehiclePlate || user.vehiclePlate,
+        driversLicenseNumber: updatedUserData.driversLicenseNumber || user.driversLicenseNumber,
+      };
+
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      throw error;
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, isLoggedIn, signOut, register, signIn }}>
+    <UserContext.Provider value={{ user, setUser, isLoggedIn, signOut, register, signIn, updateProfile }}>
       {children}
     </UserContext.Provider>
   );
