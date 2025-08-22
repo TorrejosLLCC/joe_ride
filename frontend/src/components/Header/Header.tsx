@@ -19,6 +19,7 @@ export const Header = () => {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     dateOfBirth: "",
     homeAddress: "",
     mobilePhoneNumber: "",
@@ -35,6 +36,7 @@ export const Header = () => {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
       dateOfBirth: "",
       homeAddress: "",
       mobilePhoneNumber: "",
@@ -50,9 +52,80 @@ export const Header = () => {
     try {
       setLoading(true);
       setError(null);
+
+      const isValidEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      };
+      
+      // Define validation rules for registration
+      const regValidationRules = [
+        { field: 'name', message: 'Name is required', check: (value: string) => !value.trim() },
+        { field: 'dateOfBirth', message: 'Date of Birth is required', check: (value: string) => !value },
+        { field: 'homeAddress', message: 'Home Address is required', check: (value: string) => !value.trim() },
+        { field: 'mobilePhoneNumber', message: 'Mobile Phone Number is required', check: (value: string) => !value.trim() },
+        { field: 'email', message: 'Email is required', check: (value: string) => !value.trim() },
+        { field: 'password', message: 'Password is required', check: (value: string) => !value.trim() },
+      ];
+
+      // Define validation rules for sign-in
+      const signValidationRules = [
+        { field: 'email', message: 'Email is required', check: (value: string) => !value.trim() },
+        { field: 'password', message: 'Password is required', check: (value: string) => !value.trim() },
+      ];
+
+      // Validation function for sign-in
+      const validateForm = (form: any): string | null => {
+        // Check field validation rules
+        for (const rule of signValidationRules) {
+          if (rule.check(form[rule.field])) {
+            return rule.message;
+          }
+        }
+
+        // Check email format
+        if (!isValidEmail(form.email)) {
+          return "Please enter a valid email address";
+        }
+        
+        // Check password length
+        if (form.password.length < 8) {
+          return "Password must be at least 8 characters";
+        }
+        return null;
+      };
+
+      const regValidateForm = (form: any): string | null => {
+        // Check field validation rules
+        for (const rule of regValidationRules) {
+          if (rule.check(form[rule.field])) {
+            return rule.message;
+          }
+        }
+
+        // Check email format
+      if (!isValidEmail(form.email)) {
+        return "Please enter a valid email address";
+      }
+
+        // Check password match
+        if (form.password !== form.confirmPassword) {
+          return "Passwords do not match";
+        }
+
+        // Check password length
+        if (form.password.length < 8) {
+          return "Password must be at least 8 characters";
+        }
+
+        return null;
+      };
+
+      // In your component, replace the switch statement with:
       if (authState.mode === "register") {
-        if (!form.name.trim()) {
-          setError("Name is required");
+        const validationError = regValidateForm(form);
+        if (validationError) {
+          setError(validationError);
           return;
         }
         await register({
@@ -67,7 +140,15 @@ export const Header = () => {
           driversLicenseNumber: form.driversLicenseNumber,
         });
       } else if (authState.mode === "signin") {
-        await signIn({ email: form.email.trim(), password: form.password });
+        const validationError = validateForm(form);
+        if (validationError) {
+          setError(validationError);
+          return;
+        }
+        await signIn({ 
+          email: form.email.trim(), 
+          password: form.password 
+        });
       }
       close();
     } catch (e: any) {
@@ -75,8 +156,7 @@ export const Header = () => {
     } finally {
       setLoading(false);
     }
-  };
-
+  }
   const navItems = [
     { path: "/", label: "Home", icon: "🏠" },
     { path: "/rideboard", label: "Ride Board", icon: "📋" },
@@ -138,6 +218,7 @@ export const Header = () => {
         {authState.mode === "register" && (
           <>
             <Input
+              required={true}
               label="Name"
               placeholder="Jane Rider"
               value={form.name}
@@ -197,6 +278,16 @@ export const Header = () => {
           value={form.password}
           onChange={(e) => setForm(f => ({ ...f, password: e.target.value }))}
         />
+        
+        {authState.mode === "register" && (
+          <Input
+            label="Confirm Password"
+            type="password"
+            placeholder="••••••••"
+            value={form.confirmPassword}
+            onChange={(e) => setForm(f => ({ ...f, confirmPassword: e.target.value }))}
+          />
+        )}
 
         {error && <div className="form-error" role="alert">{error}</div>}
 
@@ -204,7 +295,7 @@ export const Header = () => {
           <Button onClick={submit} disabled={loading}>
             {loading ? "Please wait..." : authState.mode === "register" ? "Register" : "Sign In"}
           </Button>
-          <Button onClick={close} variant="secondary" disabled={loading}>Cancel</Button>
+          {/* <Button onClick={close} variant="secondary" disabled={loading}>Cancel</Button> */}
         </div>
 
         {authState.mode === "signin" && (

@@ -345,10 +345,11 @@ button.link-btn:hover { text-decoration: underline; }
   z-index: 1000;
 }
 .modal { background:#1e1e1e; border:1px solid #333; border-radius:8px; padding:1.25rem; box-shadow:0 10px 30px -5px rgba(0,0,0,.6); }
-.modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.75rem; }
+.modal-header { display:flex; align-items:center; justify-content:space-between; margin-left: 20px; }
 .modal-close { background:none; border:none; color:#ccc; font-size:1.25rem; cursor:pointer; }
-.modal-body { text-align:left; display:flex; flex-direction:column; gap:.75rem; }
-.modal-actions { display:flex; gap:.75rem; margin-top:.5rem; }
+.modal-body { text-align:left; display:flex; flex-direction:column; }
+.modal-actions { display:flex; justify-content: flex-end; gap:.75rem; flex-direction: column; margin-top:.5rem; }
+.modal-actions button {width: 100%;}
 .form-error { color:#ff6b6b; font-size:.85rem; }
 .switch-auth { font-size:.8rem; margin-top:.75rem; text-align:center; }
 
