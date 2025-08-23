@@ -16,6 +16,7 @@ import { VoucherSummary } from "./pages/VoucherSummary";
 
 import "./App.css";
 import { Header } from "./components/Header/Header";
+import { ToastContainer } from "./components/UI/ToastContainer";
 
 const App: React.FC = () => {
   return (
@@ -37,6 +38,7 @@ const App: React.FC = () => {
                       <Route path="/vouchers" element={<VoucherSummary />} />
                     </Routes>
                   </main>
+                  <ToastContainer />
                 </div>
               </Router>
             </NotificationsProvider>

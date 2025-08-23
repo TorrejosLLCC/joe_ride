@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useUser } from "../../store/user-context";
+import { useNotifications } from "../../store/notifications-context";
 import { useProfileForm } from "./hooks/useProfileForm";
 import { useResizablePanel } from "./hooks/useResizablePanel";
 import { ProfileSidebar } from "./ProfileSidebar";
@@ -10,6 +11,7 @@ const NOTIFICATION_MESSAGES = PROFILE_CONSTANTS.MESSAGES;
 
 export const UserProfile = () => {
   const { user, updateProfile } = useUser();
+  const { addNotification } = useNotifications();
   const [isLoading, setIsLoading] = useState(false);
   
   const {
@@ -56,16 +58,22 @@ export const UserProfile = () => {
     try {
       await updateProfile(updateData!);
       cancelEditing();
-      // TODO: Replace with proper notification system
-      console.log(NOTIFICATION_MESSAGES.SUCCESS);
+      addNotification({
+        title: "Success",
+        message: NOTIFICATION_MESSAGES.SUCCESS,
+        type: "success"
+      });
     } catch (error) {
       console.error("Failed to update profile:", error);
-      // TODO: Replace with proper notification system
-      console.error(NOTIFICATION_MESSAGES.ERROR);
+      addNotification({
+        title: "Error",
+        message: NOTIFICATION_MESSAGES.ERROR,
+        type: "error"
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [user, validateAndGetUpdateData, updateProfile, cancelEditing]);
+  }, [user, validateAndGetUpdateData, updateProfile, cancelEditing, addNotification]);
 
   const handleFieldChange = useCallback((field: keyof typeof formData, value: string) => {
     updateField(field, value);
